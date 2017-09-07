@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <h1>Register</h1>
+  {% from "includes/_formhelpers.html" import render_field %}
+  <form method="POST" action="">
+    <div class="form-group">
+      {{render_field(form.funcionario_id, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.funcionario_nome, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.funcionario_login, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.funcionario_senha, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.confirm, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.funcionario_email, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.funcionario_status, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.funcionario_matricula, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.funcionario_ultimo_acesso, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.funcionario_enviados, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.funcionario_recebidos, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.funcionario_telefone, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.funcionario_unidade, class_="form-control")}}
+    </div>
+    <p><input type="submit" class="btn btn-primary" value="Submit"></p>
+  </form>
+{% endblock %} 
