@@ -4,7 +4,7 @@ from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
-from forms import CadastroFuncionarioForm
+from forms import CadastroFuncionarioForms
 
 app = Flask(__name__)
 
@@ -67,7 +67,7 @@ def article(id):
 # Funcionário Cadastro
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = FuncionarioCadastroForm(request.form)
+    form = FuncionarioCadastroForms(request.form)
     if request.method == 'POST' and form.validate():
         
         funcionario_id = form.funcionario_id.data
