@@ -3,6 +3,12 @@ from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
+from wtforms.validators import DataRequired
+
+class LoginForms(FlaskForm):
+	usuario = StringField('Email',validators=[DataRequired()])
+	senha = PasswordField('Senha', validators=[DataRequired()])
+
 
 #Cadastra Funcionario
 class CadastraFuncionarioForms(Form):
