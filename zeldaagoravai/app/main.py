@@ -2,10 +2,13 @@ from flask import Flask, render_template, flash, redirect, url_for, session, req
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
-from .forms import LoginForm
+from .forms import LoginForm,CadastraFuncionarioForm
 from .classes import Criptografador
 from flask.ext.login import login_user, logout_user
 from flask_mysqldb import MySQL
+from .db_interface import Zelda
+from .funcionario import Funcionario
+from .setor import Setor
 
 from app import app
 
@@ -14,10 +17,10 @@ from app import app
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'jesus'
-app.config['MYSQL_DB'] = 'zelda'
+app.config['MYSQL_DB'] = 'mzelda'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 # init MYSQL
-db = MySQL(app)
+db = Zelda(app)
 
 
 
@@ -41,17 +44,10 @@ def login():
         if form.login.data == "jailson_admin" and senhaHash == "110d46fcd978c24f306cd7fa23464d73":
             return redirect(url_for('admin'))
         
-        cur = db.connection.cursor() #isso corta
-    
-        cur.execute('SELECT funcionario_login, funcionario_senha FROM zelda_funcionario WHERE funcionario_login = %s', [form.login.data]) #isso corta
+        ans = db.verifica_login(login=form.login.data,senha = senhaHash)
         
-        result = cur.fetchall() #isso corta
-        
-        if result != None and len(result) > 0:
-            usuario = result[0]
-            
-            if usuario['funcionario_senha'] == senhaHash:
-                return redirect(url_for('home'))
+        if ans:
+            return redirect(url_for('home'))
     else:
         flash_errors(form)
     
@@ -60,7 +56,12 @@ def login():
 
 @app.route('/admin')
 def admin():
-    return render_template('index_admin.html')
+    form = CadastraFuncionarioForm()
+    
+    funcionarios = db.get_funcionarios()
+    setores = db.get_setores()
+    
+    return render_template('index_admin.html',funcionarios = funcionarios,setores = setores)
 
 
 @app.route('/home')
@@ -68,11 +69,20 @@ def home():
     return render_template('home.html')
 
 
-@app.route('/funcionario-criar')
+@app.route('/funcionario-criar', methods=['GET','POST'])
 def funcionario_criar():
+    form = CadastraFuncionarioForm()
+    flash_errors(form)
     
-    
-    return render_template('funcionario_criar.html')
+    if form.validate_on_submit():
+        funcionario = Funcionario(nome = form.funcionario_nome.data, login = form.funcionario_login.data,senha = 
+        Criptografador.gerarHash(form.funcionario_senha.data, '') )
+        
+        db.cadastra_funcionario(funcionario)           
+        return redirect(url_for('admin'))
+    else:
+        return render_template('funcionario_criar.html',form=form)
+
 
 @app.route('/funcionario-atualizar')
 def funcionario_atualizar():
